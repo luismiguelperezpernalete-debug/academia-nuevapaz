@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Nueva Paz FC - Cloud Pro</title>
+    <title>Nueva Paz FC | Sistema Profesional Cloud</title>
+    
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     
@@ -12,146 +13,181 @@
             --navy: #002347; --blue: #0056b3; --green: #28a745; 
             --red: #dc3545; --gold: #ffc107; --light: #f8f9fa; --gray: #6c757d;
         }
-        body { font-family: 'Segoe UI', sans-serif; background: #eaedf2; margin: 0; color: #333; overflow-x: hidden; }
+        body { font-family: 'Segoe UI', Roboto, sans-serif; background: #eaedf2; margin: 0; color: #333; }
         
-        /* Pantalla de Login */
-        #login-screen { position: fixed; inset: 0; background: var(--navy); color: white; display: flex; align-items: center; justify-content: center; z-index: 5000; text-align: center; }
-        .login-box { background: rgba(255,255,255,0.1); padding: 30px; border-radius: 20px; width: 85%; max-width: 320px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); }
+        /* Pantalla de Login Premium */
+        #login-screen { position: fixed; inset: 0; background: radial-gradient(circle, var(--navy) 0%, #00152b 100%); color: white; display: flex; align-items: center; justify-content: center; z-index: 5000; text-align: center; }
+        .login-box { background: rgba(255,255,255,0.1); padding: 40px; border-radius: 25px; width: 320px; backdrop-filter: blur(15px); border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
         
         /* Interfaz Principal */
         #main-app { display: none; }
-        header { background: var(--navy); color: white; padding: 20px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
-        #logo-view { max-height: 80px; border-radius: 50%; border: 3px solid white; margin-bottom: 10px; display: none; margin-left: auto; margin-right: auto; }
+        header { background: var(--navy); color: white; padding: 25px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3); position: relative; }
+        #logo-view { max-height: 90px; border-radius: 50%; border: 3px solid var(--gold); margin-bottom: 10px; display: none; margin-left: auto; margin-right: auto; box-shadow: 0 0 15px var(--gold); }
         
-        nav { background: #001a35; display: flex; justify-content: center; position: sticky; top: 0; z-index: 1000; overflow-x: auto; scrollbar-width: none; }
-        .nav-btn { background: none; border: none; color: white; padding: 15px 15px; cursor: pointer; font-size: 12px; font-weight: 600; text-transform: uppercase; opacity: 0.6; transition: 0.3s; white-space: nowrap; }
-        .nav-btn.active { opacity: 1; border-bottom: 4px solid var(--green); background: rgba(255,255,255,0.05); }
+        nav { background: #001a35; display: flex; justify-content: center; position: sticky; top: 0; z-index: 1000; overflow-x: auto; }
+        .nav-btn { background: none; border: none; color: white; padding: 18px 25px; cursor: pointer; font-size: 13px; font-weight: 700; text-transform: uppercase; opacity: 0.6; transition: 0.3s; white-space: nowrap; }
+        .nav-btn.active { opacity: 1; border-bottom: 4px solid var(--green); background: rgba(255,255,255,0.05); color: var(--gold); }
 
-        .container { max-width: 1200px; margin: 15px auto; padding: 0 10px; }
-        .tab-content { display: none; animation: fadeIn 0.3s ease; }
+        .container { max-width: 1200px; margin: 25px auto; padding: 0 15px; }
+        .tab-content { display: none; animation: slideUp 0.4s ease; }
         .tab-content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        .card { background: white; border-radius: 15px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); padding: 20px; margin-bottom: 20px; border: 1px solid #dee2e6; }
-        .grid-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; }
+        /* Tarjetas y UI */
+        .card { background: white; border-radius: 20px; box-shadow: 0 8px 25px rgba(0,0,0,0.08); padding: 25px; margin-bottom: 25px; border: 1px solid #e1e8ed; }
+        .grid-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
         
-        .table-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid #eee; background: white; }
-        table { width: 100%; border-collapse: collapse; min-width: 700px; }
-        th { background: #f8f9fa; color: var(--navy); padding: 12px 8px; font-size: 10px; text-transform: uppercase; }
-        td { padding: 10px 5px; border-bottom: 1px solid #f2f2f2; text-align: center; font-size: 13px; }
+        /* Tablas Pro */
+        .table-wrap { overflow-x: auto; border-radius: 15px; border: 1px solid #eee; }
+        table { width: 100%; border-collapse: collapse; min-width: 850px; }
+        th { background: #f8fafc; color: var(--navy); padding: 18px; font-size: 11px; text-transform: uppercase; font-weight: 800; border-bottom: 2px solid #edf2f7; }
+        td { padding: 15px; border-bottom: 1px solid #f2f2f2; text-align: center; font-size: 14px; }
+        tr:hover { background-color: #f9fbff; }
 
-        .btn { padding: 10px 15px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; font-size: 13px; display: inline-flex; align-items: center; gap: 5px; justify-content: center; }
-        .btn-green { background: var(--green); color: white; }
-        .btn-blue { background: var(--blue); color: white; }
-        .btn-tool { background: var(--light); border: 1px solid #ddd; color: var(--navy); font-size: 11px; }
-        
-        input, select { padding: 12px; border: 1px solid #cbd5e0; border-radius: 8px; width: 100%; box-sizing: border-box; font-size: 14px; }
+        /* Botones y Form */
+        .btn { padding: 12px 20px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; }
+        .btn-green { background: var(--green); color: white; box-shadow: 0 4px 10px rgba(40,167,69,0.3); }
+        .btn-blue { background: var(--blue); color: white; box-shadow: 0 4px 10px rgba(0,86,179,0.3); }
+        .btn-danger { background: #fff5f5; color: var(--red); border: 1px solid var(--red); }
+        .btn-tool { background: var(--light); border: 1px solid #cbd5e0; color: var(--navy); font-size: 12px; }
 
-        .badge { padding: 3px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; }
-        .sub-tag { background: #e1e7ff; color: #4051b5; }
-        .report-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 15px; }
-        .report-item { background: var(--navy); color: white; padding: 10px 5px; border-radius: 10px; text-align: center; font-size: 10px; }
-        .report-item b { display: block; font-size: 18px; color: var(--gold); }
+        input, select { padding: 14px; border: 2px solid #edf2f7; border-radius: 12px; width: 100%; box-sizing: border-box; transition: 0.3s; font-size: 15px; }
+        input:focus { border-color: var(--blue); outline: none; background: #fff; }
+
+        /* Reportes */
+        .report-grid { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px; }
+        .report-item { background: var(--navy); color: white; padding: 20px; border-radius: 18px; min-width: 130px; text-align: center; flex: 1; border-bottom: 5px solid var(--gold); }
+        .report-item b { display: block; font-size: 32px; color: var(--gold); margin-bottom: 5px; }
     </style>
 </head>
 <body>
 
 <div id="login-screen">
     <div class="login-box">
-        <h2 style="margin-bottom:20px; font-size: 20px;">Nueva Paz FC<br><small style="font-size: 11px; opacity: 0.7;">Control de Asistencia</small></h2>
-        <input type="password" id="pass-field" placeholder="Clave de Acceso" style="margin-bottom:15px; text-align:center;">
-        <button onclick="checkPass()" class="btn btn-green" style="width:100%;">ENTRAR</button>
+        <h1 style="margin-bottom:10px; font-size: 28px;">NUEVA PAZ FC</h1>
+        <p style="opacity: 0.7; font-size: 13px; margin-bottom: 30px;">SISTEMA ADMINISTRATIVO CLOUD</p>
+        <input type="password" id="pass-field" placeholder="Clave de Entrenador" style="text-align:center; margin-bottom:20px;">
+        <button onclick="checkPass()" class="btn btn-green" style="width:100%; justify-content: center; padding: 18px;">INICIAR SESIÓN</button>
     </div>
 </div>
 
 <div id="main-app">
     <header>
         <img id="logo-view" src="">
-        <h1 style="margin:0; font-size:20px;">Academia Nueva Paz FC</h1>
-        <div id="sync-status" style="color:var(--gold); font-size: 11px; margin-top: 5px;">☁️ Conectando...</div>
+        <h1 style="margin:0; font-size:26px; letter-spacing: 1px;">Academia Nueva Paz FC</h1>
+        <div id="sync-status" style="color:var(--gold); font-size: 12px; margin-top: 8px; font-weight: 600;">☁️ Conectando a la Nube...</div>
     </header>
 
     <nav>
-        <button class="nav-btn active" onclick="tab('control')">📊 Pagos</button>
-        <button class="nav-btn" onclick="tab('database')">👥 Nómina</button>
-        <button class="nav-btn" onclick="descargarJson()">📥 Backup</button>
+        <button class="nav-btn active" onclick="tab('control')">📊 Control Financiero</button>
+        <button class="nav-btn" onclick="tab('database')">👥 Nómina Atletas</button>
+        <div style="margin-left: auto; display: flex; align-items: center; padding-right: 15px;">
+             <button class="btn-tool" onclick="descargarJson()">📥 Backup</button>
+        </div>
     </nav>
 
     <div class="container">
+
         <div id="control" class="tab-content active">
-            <div class="grid-stats" style="grid-template-columns: 1fr 1fr; margin-bottom: 20px;">
-                <div class="card" style="padding: 15px; border-top: 4px solid var(--green); margin-bottom: 0;">
-                    <small>Caja Total</small>
-                    <div id="caja-total" style="color:var(--green); font-weight:bold; font-size: 18px;">Bs. 0</div>
+            <div class="grid-stats">
+                <div class="card" style="border-top: 8px solid var(--green)">
+                    <h3 style="margin:0; color:var(--gray); font-size: 14px; text-transform: uppercase;">RECAUDACIÓN SEMANAL</h3>
+                    <h1 id="caja-total" style="color:var(--green); margin:20px 0; font-size: 42px; letter-spacing: -1px;">Bs. 0,00</h1>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px; background: #f8f9fa; padding: 15px; border-radius: 12px; border: 1px solid #eee;">
+                        <div><small style="color:var(--gray)">Luis Miguel:</small><br><b id="cash-miguel" style="font-size: 16px;">Bs. 0</b></div>
+                        <div><small style="color:var(--gray)">Luis Eduardo:</small><br><b id="cash-eduardo" style="font-size: 16px;">Bs. 0</b></div>
+                    </div>
+                    <button onclick="liquidarCaja()" class="btn btn-blue" style="width:100%; margin-top:20px; justify-content: center;">💰 Liquidar y Repartir 50/50</button>
                 </div>
-                <div class="card" style="padding: 15px; border-top: 4px solid var(--blue); margin-bottom: 0;">
-                    <small>Balance Prof.</small>
-                    <div id="balance-msj" style="font-size: 10px; margin-top: 5px; font-weight: 600;">Calculando...</div>
+
+                <div class="card" style="border-top: 8px solid var(--gold)">
+                    <h3 style="margin:0; color:var(--gray); font-size: 14px; text-transform: uppercase;">BALANCE DE CUENTAS</h3>
+                    <div id="balance-msj" style="padding:25px 0; font-weight:700; font-size: 18px; color: var(--navy); line-height: 1.4;">
+                        Cargando balances...
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button onclick="nuevoMes()" class="btn btn-danger" style="flex:1; justify-content: center;">📅 Nuevo Mes</button>
+                    </div>
                 </div>
             </div>
 
             <div class="card">
-                <select id="filtro-cat" onchange="render()" style="margin-bottom:15px;">
-                    <option value="Todas">Todas las Categorías</option>
-                    <option value="Sub 10">Sub 10</option><option value="Sub 12">Sub 12</option>
-                    <option value="Sub 14">Sub 14</option><option value="Sub 16">Sub 16</option>
-                    <option value="Sub 18">Sub 18</option>
-                </select>
+                <div style="display:flex; justify-content:space-between; margin-bottom:25px; align-items:center; flex-wrap: wrap; gap: 15px;">
+                    <h3 style="margin:0">Asistencia y Pagos por Semana</h3>
+                    <select id="filtro-cat" onchange="render()" style="max-width:250px;">
+                        <option value="Todas">Todas las Categorías</option>
+                        <option value="Sub 10">Sub 10</option>
+                        <option value="Sub 12">Sub 12</option>
+                        <option value="Sub 14">Sub 14</option>
+                        <option value="Sub 16">Sub 16</option>
+                        <option value="Sub 18">Sub 18</option>
+                    </select>
+                </div>
                 <div class="table-wrap">
                     <table>
                         <thead>
-                            <tr><th>Atleta</th><th>S1</th><th>S2</th><th>S3</th><th>S4</th><th>Estado</th></tr>
+                            <tr>
+                                <th style="text-align:left">Nombre del Atleta</th>
+                                <th>Semana 1</th><th>Semana 2</th><th>Semana 3</th><th>Semana 4</th>
+                                <th>Estado Mes</th>
+                            </tr>
                         </thead>
                         <tbody id="tbody-pagos"></tbody>
                     </table>
-                </div>
-                <div style="display: flex; gap: 10px; margin-top: 15px;">
-                    <button onclick="liquidarCaja()" class="btn btn-blue" style="flex:1; font-size: 11px;">💰 Vaciar Caja</button>
-                    <button onclick="nuevoMes()" class="btn btn-tool" style="flex:1; color: red;">📅 Nuevo Mes</button>
                 </div>
             </div>
         </div>
 
         <div id="database" class="tab-content">
             <div class="card">
-                <h3>Resumen</h3>
+                <div style="display:flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                    <h3 style="margin:0">📈 Resumen de la Academia</h3>
+                    <button class="btn btn-tool" onclick="subirLogo()">⚙️ Configurar Logo</button>
+                </div>
                 <div id="reporte-cat" class="report-grid"></div>
-                <button class="btn btn-tool" onclick="subirLogo()" style="width:100%; margin-top:15px;">⚙️ Cambiar Logo</button>
             </div>
-            <div class="card">
-                <h3>Nuevo Atleta</h3>
-                <form id="form-reg" style="display:flex; flex-direction:column; gap:10px;">
-                    <input type="text" id="add-nombre" placeholder="Nombre completo" required>
-                    <input type="date" id="add-fecha" required>
-                    <button type="submit" class="btn btn-green">Registrar</button>
+
+            <div class="card" style="border-left: 8px solid var(--green);">
+                <h3>📝 Registro de Nuevo Atleta</h3>
+                <form id="form-reg" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                    <input type="text" id="add-nombre" placeholder="Nombre y Apellido" required>
+                    <input type="date" id="add-fecha" required title="Fecha de Nacimiento">
+                    <button type="submit" class="btn btn-green" style="justify-content: center;">AÑADIR A NÓMINA</button>
                 </form>
             </div>
+
             <div class="card">
+                <h3>👥 Listado General</h3>
                 <div class="table-wrap">
                     <table>
-                        <thead><tr><th>Nombre</th><th>Cat</th><th>Acción</th></tr></thead>
+                        <thead>
+                            <tr>
+                                <th>Nombre</th><th>Edad</th><th>Categoría</th><th>Acciones</th>
+                            </tr>
+                        </thead>
                         <tbody id="tbody-db"></tbody>
                     </table>
                 </div>
             </div>
         </div>
+
     </div>
 </div>
 
 <script>
 const firebaseConfig = {
-  apiKey: "AIzaSyAdNo6jacd1KJLEpP7OJYbAPEwVgT-lnXw",
-  authDomain: "nuevapazfc-df8f5.firebaseapp.com",
-  databaseURL: "https://nuevapazfc-df8f5-default-rtdb.firebaseio.com",
-  projectId: "nuevapazfc-df8f5",
-  storageBucket: "nuevapazfc-df8f5.firebasestorage.app",
-  messagingSenderId: "198065310289",
-  appId: "1:198065310289:web:7dc3e820ea83362fc38670"
+    apiKey: "AIzaSyAdNo6jacd1KJLEpP7OJYbAPEwVgT-lnXw",
+    authDomain: "nuevapazfc-df8f5.firebaseapp.com",
+    databaseURL: "https://nuevapazfc-df8f5-default-rtdb.firebaseio.com",
+    projectId: "nuevapazfc-df8f5",
+    storageBucket: "nuevapazfc-df8f5.appspot.com",
+    messagingSenderId: "198065310289",
+    appId: "1:198065310289:web:7dc3e820ea83362fc38670"
 };
 
-// Inicialización corregida para móviles
-firebase.initializeApp(firebaseConfig);
-const cloud = firebase.database().ref('academia_v7');
+// Inicialización
+if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+const cloud = firebase.database().ref('academia_v8_premium');
 
 let data = { atletas: [], caja: { miguel: 0, eduardo: 0 }, logo: "" };
 
@@ -160,7 +196,7 @@ function checkPass() {
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('main-app').style.display = 'block';
         conectarCloud();
-    } else { alert("Clave incorrecta"); }
+    } else { alert("Acceso denegado"); }
 }
 
 function conectarCloud() {
@@ -171,13 +207,11 @@ function conectarCloud() {
             if(!data.caja) data.caja = { miguel: 0, eduardo: 0 };
             render();
             if(data.logo) {
-                document.getElementById('logo-view').src = data.logo;
-                document.getElementById('logo-view').style.display = 'block';
+                const lv = document.getElementById('logo-view');
+                lv.src = data.logo; lv.style.display = 'block';
             }
         }
-        document.getElementById('sync-status').innerText = "☁️ Sincronizado";
-    }, (error) => {
-        document.getElementById('sync-status').innerText = "❌ Error de conexión";
+        document.getElementById('sync-status').innerText = "☁️ Nube Sincronizada";
     });
 }
 
@@ -193,11 +227,13 @@ function tab(id) {
     event.currentTarget.classList.add('active');
 }
 
+// LÓGICA DE REGISTRO
 document.getElementById('form-reg').onsubmit = function(e) {
     e.preventDefault();
     const fNac = document.getElementById('add-fecha').value;
     const edad = 2026 - new Date(fNac).getFullYear();
-    let cat = edad <= 8 ? "Sub 10" : edad <= 10 ? "Sub 12" : edad <= 12 ? "Sub 14" : edad <= 14 ? "Sub 16" : "Sub 18";
+    let cat = edad <= 10 ? "Sub 10" : edad <= 12 ? "Sub 12" : edad <= 14 ? "Sub 14" : edad <= 16 ? "Sub 16" : "Sub 18";
+
     if(!data.atletas) data.atletas = [];
     data.atletas.push({
         id: Date.now(),
@@ -214,51 +250,84 @@ function render() {
     const tbPagos = document.getElementById('tbody-pagos');
     const tbDb = document.getElementById('tbody-db');
     const rep = document.getElementById('reporte-cat');
+    
     tbPagos.innerHTML = ''; tbDb.innerHTML = '';
     let conteo = { "Sub 10":0, "Sub 12":0, "Sub 14":0, "Sub 16":0, "Sub 18":0 };
+
     if(data.atletas) {
         data.atletas.sort((a,b) => a.nombre.localeCompare(b.nombre)).forEach(a => {
             conteo[a.categoria]++;
-            tbDb.innerHTML += `<tr><td>${a.nombre}</td><td>${a.categoria}</td><td><button onclick="borrarAtleta(${a.id})">✖</button></td></tr>`;
+            const edad = 2026 - new Date(a.fecha).getFullYear();
+            
+            tbDb.innerHTML += `<tr>
+                <td style="text-align:left"><b>${a.nombre}</b></td><td>${edad} años</td>
+                <td><span class="badge sub-tag">${a.categoria}</span></td>
+                <td><button onclick="borrarAtleta(${a.id})" style="color:red; background:none; border:none; cursor:pointer; font-size:18px">×</button></td>
+            </tr>`;
+
             if(filtro === 'Todas' || a.categoria === filtro) {
-                let semsHtml = ''; let deudor = false;
+                let semsHtml = '';
+                let deudor = false;
                 a.semanas.forEach((s, i) => {
                     const act = s.asis[0] || s.asis[1];
                     if(act && !s.pagado) deudor = true;
-                    semsHtml += `<td style="background:${act && !s.pagado ? '#fff5f5' : 'none'}">
+                    semsHtml += `<td style="background:${act && !s.pagado ? '#fff5f5' : 'none'}; border-right: 1px solid #f0f0f0;">
                         <input type="checkbox" ${s.asis[0]?'checked':''} onclick="toggleAsis(${a.id},${i},0)">
                         <input type="checkbox" ${s.asis[1]?'checked':''} onclick="toggleAsis(${a.id},${i},1)">
-                        <br>${s.pagado ? `<b style="color:green;font-size:10px">Bs.${s.monto}</b><br><button onclick="editarPago(${a.id},${i})" style="font-size:9px">✏️</button>` : (act ? `<button onclick="registrarPago(${a.id},${i})" style="font-size:10px;background:var(--green);color:white;border:none;border-radius:4px;">Bs</button>`:'')}
+                        <br>
+                        ${s.pagado ? 
+                            `<div style="color:green; font-size:12px; margin-top:5px">
+                                <b>Bs.${s.monto}</b><br>
+                                <button class="btn-tool" style="padding:2px 6px; font-size:10px" onclick="editarPago(${a.id},${i})">✏️</button>
+                            </div>` : 
+                            (act ? `<button class="btn-green" style="padding:4px 8px; font-size:10px; border-radius:5px;" onclick="registrarPago(${a.id},${i})">Cobrar</button>` : '')}
                     </td>`;
                 });
-                tbPagos.innerHTML += `<tr><td style="text-align:left;font-size:11px;"><b>${a.nombre}</b><br>${a.categoria}</td>${semsHtml}<td style="color:${deudor?'red':'green'};font-weight:bold;font-size:10px">${deudor?'DEUDA':'OK'}</td></tr>`;
+                tbPagos.innerHTML += `<tr>
+                    <td style="text-align:left"><b>${a.nombre}</b><br><small style="color:gray">${a.categoria}</small></td>
+                    ${semsHtml}
+                    <td style="color:${deudor?'var(--red)':'var(--green)'}; font-weight:bold; font-size:12px">${deudor?'DEUDA ⚠️':'AL DÍA ✅'}</td>
+                </tr>`;
             }
         });
     }
+
+    // Reporte Visual
     rep.innerHTML = `<div class="report-item" style="background:var(--green)"><b>${data.atletas?.length || 0}</b>TOTAL</div>`;
     for(let c in conteo) rep.innerHTML += `<div class="report-item"><b>${conteo[c]}</b>${c}</div>`;
-    const m = data.caja?.miguel || 0; const e = data.caja?.eduardo || 0; const total = m + e;
-    document.getElementById('caja-total').innerText = `Bs. ${total.toLocaleString()}`;
+
+    // Finanzas
+    const m = data.caja?.miguel || 0;
+    const e = data.caja?.eduardo || 0;
+    const total = m + e;
+    document.getElementById('caja-total').innerText = `Bs. ${total.toLocaleString('es-VE', {minimumFractionDigits: 2})}`;
+    document.getElementById('cash-miguel').innerText = `Bs. ${m.toLocaleString('es-VE')}`;
+    document.getElementById('cash-eduardo').innerText = `Bs. ${e.toLocaleString('es-VE')}`;
+
     const mitad = total / 2;
     const bMsg = document.getElementById('balance-msj');
-    if(m > mitad) bMsg.innerHTML = `Migue debe <br><b style="color:red">Bs. ${(m - mitad).toFixed(2)}</b> a Edu`;
-    else if(e > mitad) bMsg.innerHTML = `Edu debe <br><b style="color:red">Bs. ${(e - mitad).toFixed(2)}</b> a Migue`;
-    else bMsg.innerHTML = "Cuentas al día.";
+    if(m > mitad) bMsg.innerHTML = `⚠️ Luis Miguel tiene excedente.<br>Debe entregar <span style="color:var(--red)">Bs. ${(m - mitad).toFixed(2)}</span> a Luis Eduardo.`;
+    else if(e > mitad) bMsg.innerHTML = `⚠️ Luis Eduardo tiene excedente.<br>Debe entregar <span style="color:var(--red)">Bs. ${(e - mitad).toFixed(2)}</span> a Luis Miguel.`;
+    else bMsg.innerHTML = `<span style="color:var(--green)">✅ Cuentas cuadradas.</span><br><small>Cada uno tiene el 50% exacto.</small>`;
 }
 
 function registrarPago(id, sIdx) {
-    const m = parseFloat(prompt("Monto Bs:")); if(isNaN(m)) return;
-    const r = prompt("¿Quién cobró? 1:Miguel 2:Eduardo");
+    const m = parseFloat(prompt("Monto pagado (Bs):"));
+    if(isNaN(m) || m <= 0) return;
+    const r = prompt("¿Quién recibió el dinero?\n1: Luis Miguel\n2: Luis Eduardo");
+    if(r !== '1' && r !== '2') return;
+
     const i = data.atletas.findIndex(x => x.id === id);
     data.atletas[i].semanas[sIdx].pagado = true;
     data.atletas[i].semanas[sIdx].monto = m;
     data.atletas[i].semanas[sIdx].receptor = r;
+
     if(r === '1') data.caja.miguel += m; else data.caja.eduardo += m;
     sync();
 }
 
 function editarPago(id, sIdx) {
-    if(!confirm("¿Borrar pago?")) return;
+    if(!confirm("¿Corregir este pago? Se restará de la caja del profesor correspondiente.")) return;
     const i = data.atletas.findIndex(x => x.id === id);
     const p = data.atletas[i].semanas[sIdx];
     if(p.receptor === '1') data.caja.miguel -= p.monto; else data.caja.eduardo -= p.monto;
@@ -272,11 +341,22 @@ function toggleAsis(id, s, d) {
     sync();
 }
 
-function borrarAtleta(id) { if(confirm("¿Eliminar?")) { data.atletas = data.atletas.filter(x => x.id !== id); sync(); } }
-function liquidarCaja() { if(confirm("¿Vaciar caja?")) { data.caja = { miguel: 0, eduardo: 0 }; sync(); } }
-function nuevoMes() { if(confirm("¿Reiniciar mes?")) { data.atletas.forEach(a => a.semanas = Array(4).fill().map(() => ({ asis:[false,false],pagado:false,monto:0,receptor:""}))); sync(); } }
-function subirLogo() { const url = prompt("Link del logo:"); if(url) { data.logo = url; sync(); } }
-function descargarJson() { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(data)], {type: 'application/json'})); a.download = `Backup_PazFC.json`; a.click(); }
+function borrarAtleta(id) { if(confirm("¿Eliminar permanentemente de la nómina?")) { data.atletas = data.atletas.filter(x => x.id !== id); sync(); } }
+function liquidarCaja() { if(confirm("¿Confirmas que ya se repartieron el dinero físico? Esto reiniciará la caja semanal a cero.")) { data.caja = { miguel: 0, eduardo: 0 }; sync(); } }
+function nuevoMes() { if(confirm("¿Deseas limpiar todas las asistencias y pagos para comenzar un nuevo mes? (Se recomienda hacer backup antes)")) { data.atletas.forEach(a => a.semanas = Array(4).fill().map(() => ({ asis: [false,false], pagado: false, monto: 0, receptor: "" }))); sync(); } }
+
+function subirLogo() {
+    const url = prompt("Pega el link directo de la imagen de tu logo:");
+    if(url) { data.logo = url; sync(); }
+}
+
+function descargarJson() {
+    const blob = new Blob([JSON.stringify(data)], {type: 'application/json'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `Respaldo_NuevaPaz_Cloud.json`;
+    a.click();
+}
 </script>
 </body>
 </html>
