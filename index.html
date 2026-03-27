@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nueva Paz FC - Sistema Profesional Cloud</title>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+    
+    <style>
+        :root {
+            --navy: #002347; --blue: #0056b3; --green: #28a745; 
+            --red: #dc3545; --gold: #ffc107; --light: #f8f9fa; --gray: #6c757d;
+        }
+        body { font-family: 'Segoe UI', sans-serif; background: #eaedf2; margin: 0; color: #333; }
+        
+        /* Pantalla de Login */
+        #login-screen { position: fixed; inset: 0; background: var(--navy); color: white; display: flex; align-items: center; justify-content: center; z-index: 5000; text-align: center; }
+        .login-box { background: rgba(255,255,255,0.1); padding: 40px; border-radius: 20px; width: 320px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); }
+        
+        /* Interfaz Principal */
+        #main-app { display: none; }
+        header { background: var(--navy); color: white; padding: 20px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        #logo-view { max-height: 90px; border-radius: 50%; border: 3px solid white; margin-bottom: 10px; display: none; margin-left: auto; margin-right: auto; }
+        
+        nav { background: #001a35; display: flex; justify-content: center; position: sticky; top: 0; z-index: 1000; overflow-x: auto; }
+        .nav-btn { background: none; border: none; color: white; padding: 15px 20px; cursor: pointer; font-size: 13px; font-weight: 600; text-transform: uppercase; opacity: 0.6; transition: 0.3s; white-space: nowrap; }
+        .nav-btn.active { opacity: 1; border-bottom: 4px solid var(--green); background: rgba(255,255,255,0.05); }
+
+        .container { max-width: 1200px; margin: 25px auto; padding: 0 15px; }
+        .tab-content { display: none; animation: fadeIn 0.4s ease; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Tarjetas y UI */
+        .card { background: white; border-radius: 15px; box-shadow: 0 6px 18px rgba(0,0,0,0.06); padding: 25px; margin-bottom: 25px; border: 1px solid #dee2e6; }
+        .grid-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        
+        /* Tablas */
+        .table-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid #eee; }
+        table { width: 100%; border-collapse: collapse; background: white; min-width: 900px; }
+        th { background: #f8f9fa; color: var(--navy); padding: 15px; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+        td { padding: 12px; border-bottom: 1px solid #f2f2f2; text-align: center; font-size: 14px; }
+        tr:hover { background-color: #f9f9f9; }
+
+        /* Botones y Form */
+        .btn { padding: 10px 18px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 5px; }
+        .btn-green { background: var(--green); color: white; }
+        .btn-blue { background: var(--blue); color: white; }
+        .btn-tool { background: var(--light); border: 1px solid #ddd; color: var(--navy); font-size: 12px; }
+        .btn-danger { background: #fff5f5; color: var(--red); border: 1px solid var(--red); }
+
+        input, select { padding: 12px; border: 1px solid #cbd5e0; border-radius: 8px; flex: 1; min-width: 180px; }
+
+        /* Badges y Reportes */
+        .badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; }
+        .sub-tag { background: #e1e7ff; color: #4051b5; }
+        .report-grid { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 15px; }
+        .report-item { background: var(--navy); color: white; padding: 15px; border-radius: 12px; min-width: 110px; text-align: center; }
+        .report-item b { display: block; font-size: 26px; color: var(--gold); }
+    </style>
+</head>
+<body>
+
+<div id="login-screen">
+    <div class="login-box">
+        <h2 style="margin-bottom:25px;">Nueva Paz FC<br><small style="font-size: 12px; opacity: 0.7;">Panel de Administración</small></h2>
+        <input type="password" id="pass-field" placeholder="Clave de Entrenador" style="width:100%; box-sizing:border-box; margin-bottom:20px; text-align:center; font-size: 18px;">
+        <button onclick="checkPass()" class="btn btn-green" style="width:100%; justify-content: center; padding: 15px;">ENTRAR AL SISTEMA</button>
+    </div>
+</div>
+
+<div id="main-app">
+    <header>
+        <img id="logo-view" src="">
+        <h1 style="margin:0; font-size:24px; letter-spacing: 1px;">Academia Nueva Paz FC</h1>
+        <div id="sync-status" style="color:var(--gold); font-size: 12px; margin-top: 5px;">☁️ Conectado a la Nube</div>
+    </header>
+
+    <nav>
+        <button class="nav-btn active" onclick="tab('control')">📊 Control y Finanzas</button>
+        <button class="nav-btn" onclick="tab('database')">👥 Nómina Academia</button>
+        <div style="margin-left: auto; display: flex; align-items: center; padding-right: 15px;">
+            <button class="btn-tool" style="margin-right: 5px;" onclick="descargarJson()">📥 Backup</button>
+            <button class="btn-tool" onclick="document.getElementById('fileIn').click()">📤 Cargar</button>
+            <input type="file" id="fileIn" style="display:none" onchange="cargarJson(event)">
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <div id="control" class="tab-content active">
+            <div class="grid-stats">
+                <div class="card" style="border-top: 6px solid var(--green)">
+                    <h3 style="margin:0; color:var(--gray); font-size: 14px;">RECAUDACIÓN SEMANAL</h3>
+                    <h1 id="caja-total" style="color:var(--green); margin:15px 0; font-size: 36px;">Bs. 0,00</h1>
+                    <div style="display:flex; justify-content: space-between; font-size: 13px; background: #f8f9fa; padding: 10px; border-radius: 8px;">
+                        <span>L. Miguel: <b id="cash-miguel">0</b></span>
+                        <span>L. Eduardo: <b id="cash-eduardo">0</b></span>
+                    </div>
+                    <button onclick="liquidarCaja()" class="btn btn-blue" style="width:100%; margin-top:15px; justify-content: center;">💰 Liquidar y Repartir</button>
+                </div>
+                <div class="card" style="border-top: 6px solid var(--blue)">
+                    <h3 style="margin:0; color:var(--gray); font-size: 14px;">BALANCE DE PROFESORES</h3>
+                    <div id="balance-msj" style="padding:20px 0; font-weight:600; font-size: 15px; color: var(--navy);">Calculando cuentas...</div>
+                    <button onclick="nuevoMes()" class="btn btn-danger" style="width:100%; justify-content: center;">📅 Iniciar Nuevo Mes</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div style="display:flex; justify-content:space-between; margin-bottom:20px; align-items:center; flex-wrap: wrap; gap: 10px;">
+                    <h3 style="margin:0">Asistencia y Pagos Semanales</h3>
+                    <select id="filtro-cat" onchange="render()" style="max-width:220px;">
+                        <option value="Todas">Todas las Categorías</option>
+                        <option value="Sub 10">Sub 10</option>
+                        <option value="Sub 12">Sub 12</option>
+                        <option value="Sub 14">Sub 14</option>
+                        <option value="Sub 16">Sub 16</option>
+                        <option value="Sub 18">Sub 18</option>
+                    </select>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="text-align:left">Atleta</th>
+                                <th>Semana 1</th><th>Semana 2</th><th>Semana 3</th><th>Semana 4</th>
+                                <th>Estado Mes</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-pagos"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="database" class="tab-content">
+            <div class="card">
+                <div style="display:flex; justify-content: space-between; align-items: center;">
+                    <h3>📈 Resumen de Inscritos</h3>
+                    <button class="btn btn-tool" onclick="subirLogo()">⚙️ Cambiar Logo Academia</button>
+                </div>
+                <div id="reporte-cat" class="report-grid"></div>
+            </div>
+
+            <div class="card">
+                <h3>📝 Registrar Nuevo Atleta</h3>
+                <form id="form-reg" class="grid-stats" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                    <input type="text" id="add-nombre" placeholder="Nombre y Apellido" required>
+                    <input type="text" id="add-cedula" placeholder="Cédula (Opcional)">
+                    <input type="date" id="add-fecha" required>
+                    <button type="submit" class="btn btn-green" style="justify-content: center;">Registrar en Nómina</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h3>👥 Listado de la Academia</h3>
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nombre</th><th>Cédula</th><th>F. Nacimiento</th><th>Categoría</th><th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-db"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+// --- CONFIGURACIÓN DE TU FIREBASE (Tus datos reales de la imagen) ---
+const firebaseConfig = {
+  apiKey: "AIzaSyAdNo6jacd1KJLEpP7OJYbAPEwVgT-lnXw",
+  authDomain: "nuevapazfc-df8f5.firebaseapp.com",
+  databaseURL: "https://nuevapazfc-df8f5-default-rtdb.firebaseio.com",
+  projectId: "nuevapazfc-df8f5",
+  storageBucket: "nuevapazfc-df8f5.firebasestorage.app",
+  messagingSenderId: "198065310289",
+  appId: "1:198065310289:web:7dc3e820ea83362fc38670"
+};
+
+firebase.initializeApp(firebaseConfig);
+const cloud = firebase.database().ref('academia_v7');
+
+let data = { atletas: [], caja: { miguel: 0, eduardo: 0 }, logo: "" };
+
+// LOGIN
+function checkPass() {
+    if(document.getElementById('pass-field').value === "NuevaPaz2026") {
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('main-app').style.display = 'block';
+        conectarCloud();
+    } else { alert("Clave incorrecta"); }
+}
+
+// SINCRONIZACIÓN
+function conectarCloud() {
+    cloud.on('value', (snapshot) => {
+        const val = snapshot.val();
+        if(val) {
+            data = val;
+            if(!data.caja) data.caja = { miguel: 0, eduardo: 0 };
+            render();
+            if(data.logo) {
+                document.getElementById('logo-view').src = data.logo;
+                document.getElementById('logo-view').style.display = 'block';
+            }
+        }
+    });
+}
+
+function sync() {
+    document.getElementById('sync-status').innerText = "⏳ Guardando en nube...";
+    cloud.set(data).then(() => {
+        document.getElementById('sync-status').innerText = "☁️ Sincronizado";
+    });
+}
+
+function tab(id) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    event.currentTarget.classList.add('active');
+}
+
+// LÓGICA DE NEGOCIO
+document.getElementById('form-reg').onsubmit = function(e) {
+    e.preventDefault();
+    const fNac = document.getElementById('add-fecha').value;
+    const edad = 2026 - new Date(fNac).getFullYear();
+    let cat = edad <= 8 ? "Sub 10" : edad <= 10 ? "Sub 12" : edad <= 12 ? "Sub 14" : edad <= 14 ? "Sub 16" : "Sub 18";
+
+    if(!data.atletas) data.atletas = [];
+    data.atletas.push({
+        id: Date.now(),
+        nombre: document.getElementById('add-nombre').value.toUpperCase(),
+        cedula: document.getElementById('add-cedula').value || "S/C",
+        fecha: fNac,
+        categoria: cat,
+        semanas: Array(4).fill().map(() => ({ asis: [false, false], pagado: false, monto: 0, receptor: "" }))
+    });
+    sync(); this.reset();
+};
+
+function render() {
+    const filtro = document.getElementById('filtro-cat').value;
+    const tbPagos = document.getElementById('tbody-pagos');
+    const tbDb = document.getElementById('tbody-db');
+    const rep = document.getElementById('reporte-cat');
+    
+    tbPagos.innerHTML = ''; tbDb.innerHTML = '';
+    let conteo = { "Sub 10":0, "Sub 12":0, "Sub 14":0, "Sub 16":0, "Sub 18":0 };
+
+    if(data.atletas) {
+        data.atletas.sort((a,b) => a.nombre.localeCompare(b.nombre)).forEach(a => {
+            conteo[a.categoria]++;
+            tbDb.innerHTML += `<tr>
+                <td><b>${a.nombre}</b></td><td>${a.cedula}</td><td>${a.fecha}</td>
+                <td><span class="badge sub-tag">${a.categoria}</span></td>
+                <td><button onclick="borrarAtleta(${a.id})" style="color:red; background:none; border:none; cursor:pointer">✖</button></td>
+            </tr>`;
+
+            if(filtro === 'Todas' || a.categoria === filtro) {
+                let semsHtml = '';
+                let deudor = false;
+                a.semanas.forEach((s, i) => {
+                    const act = s.asis[0] || s.asis[1];
+                    if(act && !s.pagado) deudor = true;
+                    semsHtml += `<td style="background:${act && !s.pagado ? '#fff5f5' : 'none'}">
+                        <input type="checkbox" ${s.asis[0]?'checked':''} onclick="toggleAsis(${a.id},${i},0)">
+                        <input type="checkbox" ${s.asis[1]?'checked':''} onclick="toggleAsis(${a.id},${i},1)">
+                        <br>
+                        ${s.pagado ? 
+                            `<div style="color:green; font-size:11px; margin-top:5px">
+                                <b>Bs.${s.monto}</b><br>
+                                <button class="btn-tool" style="padding:2px 4px; font-size:9px" onclick="editarPago(${a.id},${i})">✏️</button>
+                                <button class="btn-tool" style="padding:2px 4px; font-size:9px" onclick="compartirRecibo(${a.id},${i})">📄</button>
+                            </div>` : 
+                            (act ? `<button class="btn-pay" onclick="registrarPago(${a.id},${i})">Cobrar</button>` : '')}
+                    </td>`;
+                });
+                tbPagos.innerHTML += `<tr>
+                    <td style="text-align:left"><b>${a.nombre}</b><br><small>${a.categoria}</small></td>
+                    ${semsHtml}
+                    <td style="color:${deudor?'red':'green'}; font-weight:bold">${deudor?'DEUDOR':'AL DÍA'}</td>
+                </tr>`;
+            }
+        });
+    }
+
+    rep.innerHTML = `<div class="report-item" style="background:var(--green)"><b>${data.atletas?.length || 0}</b>TOTAL</div>`;
+    for(let c in conteo) rep.innerHTML += `<div class="report-item"><b>${conteo[c]}</b>${c}</div>`;
+
+    const m = data.caja?.miguel || 0;
+    const e = data.caja?.eduardo || 0;
+    const total = m + e;
+    document.getElementById('caja-total').innerText = `Bs. ${total.toLocaleString('es-VE')}`;
+    document.getElementById('cash-miguel').innerText = `Bs. ${m.toLocaleString('es-VE')}`;
+    document.getElementById('cash-eduardo').innerText = `Bs. ${e.toLocaleString('es-VE')}`;
+
+    const mitad = total / 2;
+    const bMsg = document.getElementById('balance-msj');
+    if(m > mitad) bMsg.innerHTML = `⚠️ Luis Miguel debe entregar <b style="color:red">Bs. ${(m - mitad).toFixed(2)}</b> a Luis Eduardo.`;
+    else if(e > mitad) bMsg.innerHTML = `⚠️ Luis Eduardo debe entregar <b style="color:red">Bs. ${(e - mitad).toFixed(2)}</b> a Luis Miguel.`;
+    else bMsg.innerHTML = `<span style="color:green">✅ Las cuentas están perfectamente cuadradas.</span>`;
+}
+
+function registrarPago(id, sIdx) {
+    const m = parseFloat(prompt("Monto pagado (Bs):"));
+    if(isNaN(m)) return;
+    const r = prompt("¿Quién cobró?\n1: Luis Miguel\n2: Luis Eduardo");
+    if(r !== '1' && r !== '2') return;
+
+    const i = data.atletas.findIndex(x => x.id === id);
+    data.atletas[i].semanas[sIdx].pagado = true;
+    data.atletas[i].semanas[sIdx].monto = m;
+    data.atletas[i].semanas[sIdx].receptor = r;
+
+    if(r === '1') data.caja.miguel += m; else data.caja.eduardo += m;
+    sync();
+}
+
+function editarPago(id, sIdx) {
+    if(!confirm("¿Corregir este pago? Se restará de la caja del profesor.")) return;
+    const i = data.atletas.findIndex(x => x.id === id);
+    const p = data.atletas[i].semanas[sIdx];
+    if(p.receptor === '1') data.caja.miguel -= p.monto; else data.caja.eduardo -= p.monto;
+    p.pagado = false; p.monto = 0; p.receptor = "";
+    sync();
+}
+
+function compartirRecibo(id, sIdx) {
+    const a = data.atletas.find(x => x.id === id);
+    const s = a.semanas[sIdx];
+    const prof = s.receptor === '1' ? "Luis Miguel Pérez" : "Luis Eduardo Rodríguez";
+    const txt = `⚽ *NUEVA PAZ FC - RECIBO*\n\nAtleta: ${a.nombre}\nSemana: ${sIdx+1}\nMonto: Bs. ${s.monto}\nRecibido por: ${prof}\n\n_¡Gracias por su pago!_`;
+    navigator.clipboard.writeText(txt);
+    alert("Recibo copiado. Ya puedes pegarlo en WhatsApp.");
+}
+
+function toggleAsis(id, s, d) {
+    const i = data.atletas.findIndex(x => x.id === id);
+    data.atletas[i].semanas[s].asis[d] = !data.atletas[i].semanas[s].asis[d];
+    sync();
+}
+
+function borrarAtleta(id) { if(confirm("¿Eliminar de la nómina?")) { data.atletas = data.atletas.filter(x => x.id !== id); sync(); } }
+function liquidarCaja() { if(confirm("¿Repartir dinero y reiniciar caja semanal?")) { data.caja = { miguel: 0, eduardo: 0 }; sync(); } }
+function nuevoMes() { if(confirm("¿Limpiar asistencias para el nuevo mes?")) { data.atletas.forEach(a => a.semanas = Array(4).fill().map(() => ({ asis: [false,false], pagado: false, monto: 0, receptor: "" }))); sync(); } }
+
+function subirLogo() {
+    const url = prompt("Pega el enlace de la imagen de tu logo (puedes subirlo a una web de fotos y pegar el link aquí):");
+    if(url) { data.logo = url; sync(); }
+}
+
+function descargarJson() {
+    const blob = new Blob([JSON.stringify(data)], {type: 'application/json'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `Respaldo_NuevaPaz_Cloud.json`;
+    a.click();
+}
+
+function cargarJson(e) {
+    const reader = new FileReader();
+    reader.onload = (ev) => { data = JSON.parse(ev.target.result); sync(); };
+    reader.readAsText(e.target.files[0]);
+}
+</script>
+</body>
+</html>
